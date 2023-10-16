@@ -7,7 +7,7 @@ from flask_httpauth import HTTPBasicAuth
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.serving import run_simple
-
+from flask_cors import CORS
 from updog.utils.path import is_valid_subpath, is_valid_upload_path, get_parent_directory, process_files
 from updog.utils.output import error, info, warn, success
 from updog import version as VERSION
@@ -34,7 +34,7 @@ def parse_arguments():
     parser.add_argument('--password', type=str, default='', help='Use a password to access the page. (No username)')
     parser.add_argument('--ssl', action='store_true', help='Use an encrypted connection')
     parser.add_argument('--version', action='version', version='%(prog)s v'+VERSION)
-
+    parser.add_argument('--cors', action='store_true', help='Enable CORS')
     args = parser.parse_args()
 
     # Normalize the path
@@ -48,7 +48,8 @@ def main():
 
     app = Flask(__name__)
     auth = HTTPBasicAuth()
-
+    if args.cors:
+        CORS(app)
     global base_directory
     base_directory = args.directory
 
@@ -88,9 +89,9 @@ def main():
                 # Check if file extension
                 (filename, extension) = os.path.splitext(requested_path)
                 if extension == '':
-                    mimetype = 'text/plain'
+                    mimetype = 'bytes'
                 else:
-                    mimetype = None
+                    mimetype = 'bytes'
 
                 try:
                     return send_file(requested_path, mimetype=mimetype, as_attachment=send_as_attachment)
@@ -113,7 +114,7 @@ def main():
             return render_template('home.html', files=directory_files, back=back,
                                    directory=requested_path, is_subdirectory=is_subdirectory, version=VERSION)
         else:
-            return redirect('/')
+            return  ("", 404)
 
     #############################
     # File Upload Functionality #
