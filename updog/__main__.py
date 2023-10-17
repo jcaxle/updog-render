@@ -8,9 +8,9 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.serving import run_simple
 from flask_cors import CORS
-from updog.utils.path import is_valid_subpath, is_valid_upload_path, get_parent_directory, process_files
-from updog.utils.output import error, info, warn, success
-from updog import version as VERSION
+from utils.path import is_valid_subpath, is_valid_upload_path, get_parent_directory, process_files
+from utils.output import error, info, warn, success
+from __init__ import version as VERSION
 
 
 def read_write_directory(directory):
